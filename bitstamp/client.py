@@ -515,6 +515,59 @@ class Trading(Public):
         return self._post("transfer-from-main/", data=data, return_json=True,
                           version=2)
 
+    def open_bank_withdrawal(self, amount, account_currency,
+                            name, IBAN, BIC,
+                            address, postal_code, city, country, w_type,
+                            bank_name, bank_address, bank_postal_code,
+                            bank_city, bank_country, currency, comment):
+        """
+        Returns dictionary with id of the opened withdrawal request or a status
+        and a reason on error.
+        'w_type' is either 'sepa' or 'international'.
+        'bank_name', 'bank_address', 'bank_postal_code','bank_city',
+        'bank_country' and 'currency' are only needed for international
+        withdrawals.
+        'comment' is optional.
+        """
+        data = {'amount': amount,
+                'account_currency': account_currency,
+                'IBAN': IBAN,
+                'BIC': BIC,
+                'address': address,
+                'postal_code': postal_code,
+                'city': city,
+                'country': country,
+                'type': w_type,
+                'bank_name': bank_name,
+                'bank_address': bank_address,
+                'bank_postal_code': bank_postal_code,
+                'bank_city': bank_city,
+                'bank_country': bank_country,
+                'currency': currency,
+                'comment': comment}
+        return self._post("withdrawal/open/", data=data, return_json=True,
+                          version=2)
+
+    def bank_withdrawal_status(self, id):
+        """
+        Returns dictionary with status.
+        'id' is ID of the withdrawal request.
+        Disclaimer: can only be performed by main account.
+        """
+        data = {'id': id}
+        return self._post("withdrawal/status/", data=data, return_json=True,
+                          version=2)
+
+    def cancel_bank_withdrawal(self, id):
+        """
+        Returns dictionary with id, amount, currency, account_currency and type
+        on success and status on failure.
+        'id' is ID of the withdrawal request.
+        Disclaimer: can only be performed by main account.
+        """
+        data = {'id': id}
+        return self._post("withdrawal/cancel/", data=data, return_json=True,
+                          version=2)
 
 # Backwards compatibility
 class BackwardsCompat(object):
